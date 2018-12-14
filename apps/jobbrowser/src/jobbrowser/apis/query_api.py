@@ -39,6 +39,7 @@ def _get_api(user):
   server_url = _get_impala_server_url(session)
   return get_impalad_api(user=user, url=server_url)
 
+
 class QueryApi(Api):
 
   def __init__(self, user, impala_api=None):

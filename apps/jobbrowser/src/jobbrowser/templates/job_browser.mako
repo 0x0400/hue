@@ -88,12 +88,26 @@ ${ commonheader("Job Browser", "jobbrowser", user, request) | n,unicode }
     <!-- ko component: {
       name: 'hue-context-selector',
       params: {
+        sourceType: 'impala',
+        compute: compute,
+        ##namespace: namespace,
+        ##availableDatabases: availableDatabases,
+        ##database: database,
+        hideDatabases: true
+      }
+    } --><!-- /ko -->
+
+    % if not conf.IS_K8S_ONLY.get():
+    <!-- ko component: {
+      name: 'hue-context-selector',
+      params: {
         sourceType: 'jobs',
         cluster: cluster,
         onClusterSelect: onClusterSelect,
         hideLabels: true
       }
     } --><!-- /ko -->
+    % endif
   </div>
   <ul class="nav nav-pills">
     <!-- ko foreach: availableInterfaces -->
@@ -2978,6 +2992,7 @@ ${ commonheader("Job Browser", "jobbrowser", user, request) | n,unicode }
 
       self._fetchJobs = function (callback) {
         return $.post("/jobbrowser/api/jobs/" + vm.interface(), {
+          cluster: ko.mapping.toJSON(vm.compute),
           interface: ko.mapping.toJSON(vm.interface),
           filters: ko.mapping.toJSON(self.filters),
         }, function (data) {
@@ -3180,6 +3195,7 @@ ${ commonheader("Job Browser", "jobbrowser", user, request) | n,unicode }
       self.isMini = ko.observable(false);
 
       self.cluster = ko.observable();
+      self.compute = ko.observable();
 
       self.availableInterfaces = ko.pureComputed(function () {
         var jobsInterfaceCondition = function () {
@@ -3492,9 +3508,12 @@ ${ commonheader("Job Browser", "jobbrowser", user, request) | n,unicode }
       }, 'jobbrowser');
 
       % if is_mini:
-        huePubSub.subscribe('mini.jb.navigate', function (interface) {
+        huePubSub.subscribe('mini.jb.navigate', function (options) {
+          if (options.compute) {
+            jobBrowserViewModel.compute(options.compute);
+          }
           $('#jobsPanel .nav-pills li').removeClass('active');
-          interface = jobBrowserViewModel.isValidInterface(interface);
+          interface = jobBrowserViewModel.isValidInterface(options.section);
           $('#jobsPanel .nav-pills li[data-interface="' + interface + '"]').addClass('active');
           jobBrowserViewModel.selectInterface(interface);
         });

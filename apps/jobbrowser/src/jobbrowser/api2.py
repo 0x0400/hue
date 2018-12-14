@@ -51,6 +51,7 @@ def api_error_handler(func):
 def jobs(request, interface=None):
   response = {'status': -1}
 
+  cluster = json.loads(request.POST.get('cluster', '{}'))
   interface = json.loads(request.POST.get('interface'))
   filters = dict([(key, value) for _filter in json.loads(request.POST.get('filters', '[]')) for key, value in _filter.items() if value])
 
