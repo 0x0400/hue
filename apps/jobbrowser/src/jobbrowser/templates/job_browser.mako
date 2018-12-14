@@ -2502,6 +2502,7 @@ ${ commonheader("Job Browser", "jobbrowser", user, request) | n,unicode }
         }
 
         return $.post("/jobbrowser/api/job/" + vm.interface(), {
+          cluster: ko.mapping.toJSON(vm.compute),
           app_id: ko.mapping.toJSON(self.id),
           interface: ko.mapping.toJSON(vm.interface)
         }, function (data) {
@@ -2657,6 +2658,7 @@ ${ commonheader("Job Browser", "jobbrowser", user, request) | n,unicode }
       self.fetchLogs = function (name) {
         name = name || 'default';
         $.post("/jobbrowser/api/job/logs?is_embeddable=${ str(is_embeddable).lower() }", {
+          cluster: ko.mapping.toJSON(vm.compute),
           app_id: ko.mapping.toJSON(self.id),
           interface: ko.mapping.toJSON(vm.interface),
           type: ko.mapping.toJSON(self.type),
@@ -2677,6 +2679,7 @@ ${ commonheader("Job Browser", "jobbrowser", user, request) | n,unicode }
 
       self.fetchProfile = function (name, callback) {
         $.post("/jobbrowser/api/job/profile", {
+          cluster: ko.mapping.toJSON(vm.compute),
           app_id: ko.mapping.toJSON(self.id),
           interface: ko.mapping.toJSON(vm.interface),
           app_type: ko.mapping.toJSON(self.type),
@@ -2696,6 +2699,7 @@ ${ commonheader("Job Browser", "jobbrowser", user, request) | n,unicode }
 
       self.fetchStatus = function () {
         $.post("/jobbrowser/api/job", {
+          cluster: ko.mapping.toJSON(vm.compute),
           app_id: ko.mapping.toJSON(self.id),
           interface: ko.mapping.toJSON(self.mainType)
         }, function (data) {
